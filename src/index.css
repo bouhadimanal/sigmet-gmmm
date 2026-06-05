@@ -1,75 +1,138 @@
+@import 'leaflet/dist/leaflet.css';
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+/* ============================================================
+   Thème Dark Mode Aviation - SIGMET Generator GMMM
+   ============================================================ */
+
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 240 10% 3.9%;
-    --card: 0 0% 100%;
-    --card-foreground: 240 10% 3.9%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 240 10% 3.9%;
-    --primary: 240 5.9% 10%;
-    --primary-foreground: 0 0% 98%;
-    --secondary: 240 4.8% 95.9%;
-    --secondary-foreground: 240 5.9% 10%;
-    --muted: 240 4.8% 95.9%;
-    --muted-foreground: 240 3.8% 46.1%;
-    --accent: 240 4.8% 95.9%;
-    --accent-foreground: 240 5.9% 10%;
-    --destructive: 0 84.2% 60.2%;
+    /* Aviation Dark Theme - forcé dark mode */
+    --background: 220 25% 6%;
+    --foreground: 210 20% 95%;
+    --card: 220 20% 8%;
+    --card-foreground: 210 20% 95%;
+    --popover: 220 20% 8%;
+    --popover-foreground: 210 20% 95%;
+    --primary: 200 80% 55%;
+    --primary-foreground: 220 25% 6%;
+    --secondary: 220 15% 15%;
+    --secondary-foreground: 210 20% 90%;
+    --muted: 220 15% 18%;
+    --muted-foreground: 210 10% 55%;
+    --accent: 200 80% 55%;
+    --accent-foreground: 220 25% 6%;
+    --destructive: 0 70% 50%;
     --destructive-foreground: 0 0% 98%;
-    --border: 240 5.9% 90%;
-    --input: 240 5.9% 90%;
-    --ring: 240 5.9% 10%;
-    --radius: 0.625rem;
-    --sidebar-background: 0 0% 98%;
-    --sidebar-foreground: 240 5.3% 26.1%;
-    --sidebar-primary: 240 5.9% 10%;
-    --sidebar-primary-foreground: 0 0% 98%;
-    --sidebar-accent: 240 4.8% 95.9%;
-    --sidebar-accent-foreground: 240 5.9% 10%;
-    --sidebar-border: 220 13% 91%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --border: 220 15% 18%;
+    --input: 220 15% 15%;
+    --ring: 200 80% 55%;
+    --radius: 0.5rem;
+
+    /* Couleurs aviation */
+    --aviation-blue: 200 80% 55%;
+    --aviation-cyan: 180 70% 50%;
+    --aviation-green: 140 60% 45%;
+    --aviation-yellow: 45 90% 55%;
+    --aviation-orange: 25 90% 55%;
+    --aviation-red: 0 80% 55%;
+    --aviation-purple: 270 60% 55%;
+    --aviation-dark: 220 25% 6%;
+    --aviation-panel: 220 18% 10%;
   }
 
-  .dark {
-    --background: 240 10% 3.9%;
-    --foreground: 0 0% 98%;
-    --card: 240 10% 3.9%;
-    --card-foreground: 0 0% 98%;
-    --popover: 240 10% 3.9%;
-    --popover-foreground: 0 0% 98%;
-    --primary: 0 0% 98%;
-    --primary-foreground: 240 5.9% 10%;
-    --secondary: 240 3.7% 15.9%;
-    --secondary-foreground: 0 0% 98%;
-    --muted: 240 3.7% 15.9%;
-    --muted-foreground: 240 5% 64.9%;
-    --accent: 240 3.7% 15.9%;
-    --accent-foreground: 0 0% 98%;
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 240 3.7% 15.9%;
-    --input: 240 3.7% 15.9%;
-    --ring: 240 4.9% 83.9%;
-    --sidebar-background: 240 5.9% 10%;
-    --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 224.3 76.3% 48%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 3.7% 15.9%;
-    --sidebar-accent-foreground: 240 4.8% 95.9%;
-    --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
-  }
-}
-
-@layer base {
   * {
     @apply border-border;
   }
+
+  html {
+    height: 100%;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+  }
+
   body {
-    @apply bg-background text-foreground;
+    height: 100%;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    background-color: hsl(220 25% 6%);
+    color: hsl(210 20% 95%);
+    font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  #root {
+    height: 100%;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+  }
+}
+
+/* ============================================================
+   Styles Leaflet - Dark Mode
+   ============================================================ */
+
+@layer components {
+  .leaflet-container {
+    background-color: #0a0e1a !important;
+    font-family: 'Inter', 'Segoe UI', system-ui, sans-serif !important;
+  }
+
+  .leaflet-control-zoom a {
+    background-color: #1a1f2e !important;
+    color: #cbd5e1 !important;
+    border-color: #334155 !important;
+  }
+
+  .leaflet-control-zoom a:hover {
+    background-color: #252b3d !important;
+    color: #ffffff !important;
+  }
+
+  .leaflet-control-attribution {
+    background-color: rgba(10, 14, 26, 0.8) !important;
+    color: #64748b !important;
+  }
+
+  .leaflet-control-attribution a {
+    color: #94a3b8 !important;
+  }
+
+  /* Tooltip SIGMET */
+  .sigmet-tooltip {
+    background-color: rgba(26, 31, 46, 0.95);
+    color: #f1f5f9;
+    padding: 8px 12px;
+    border-radius: 6px;
+    border: 1px solid #475569;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
+    font-size: 12px;
+    font-family: ui-monospace, 'Cascadia Code', 'Source Code Pro', monospace;
+  }
+
+  /* Scrollbar sombre */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background-color: #334155;
+    border-radius: 9999px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background-color: #475569;
   }
 }

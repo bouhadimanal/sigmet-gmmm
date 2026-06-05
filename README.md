@@ -1,73 +1,76 @@
-# React + TypeScript + Vite
+# SIGMET Generator GMMM
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Application de generation de messages SIGMET pour la FIR Casablanca (GMMM).
 
-Currently, two official plugins are available:
+## Fonctionnalites
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- Carte interactive avec la FIR Casablanca
+- Dessin de polygones (WI) et lignes (E/W/N/S OF LINE) jusqu'a 4 points
+- Generation automatique de SIGMET au format OACI
+- Radar orages en temps reel (RainViewer)
+- Heure de debut et duree de validite configurables (1-4H)
 
-## React Compiler
+## Deploiement sur Render.com (GRATUIT)
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+### Etape 1 : Creer un compte
+1. Allez sur https://render.com
+2. Cliquez sur **Sign Up** (inscription avec email ou GitHub)
+3. Verifiez votre email
 
-## Expanding the ESLint configuration
+### Etape 2 : Creer un nouveau Web Service
+1. Sur le dashboard Render, cliquez **New +**
+2. Selectionnez **Web Service**
+3. Choisissez **Deploy from Git repository** OU **Upload files**
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+### Etape 3 : Uploader les fichiers (sans Git)
+1. Creez un dossier zip contenant TOUS les fichiers du projet
+2. Sur Render, selectionnez **Upload files** au lieu de Git
+3. Uploadez le zip
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+### Etape 4 : Configuration
+Remplissez les champs :
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+| Champ | Valeur |
+|-------|--------|
+| **Name** | `sigmet-gmmm` (ou le nom que vous voulez) |
+| **Environment** | `Node` |
+| **Build Command** | `npm install && npm run build` |
+| **Start Command** | `npm start` |
+| **Plan** | `Free` |
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+### Etape 5 : Deployer
+1. Cliquez sur **Create Web Service**
+2. Render va automatiquement :
+   - Installer les dependances (`npm install`)
+   - Builder le frontend React (`npm run build`)
+   - Lancer le serveur (`npm start`)
+3. Attendez 2-3 minutes que le deploiement finisse
+4. Votre URL sera : `https://sigmet-gmmm.onrender.com`
+
+### Etape 6 : Partager
+Copiez l'URL et envoyez-la a vos collegues !
+
+## Structure du projet
+
+```
+├── dist/                 # Frontend build (genere automatiquement)
+├── src/
+│   ├── App.tsx           # Application principale
+│   ├── index.css         # Styles
+│   └── ...
+├── server.cjs            # Backend Node.js (API eclairs + radar)
+├── package.json
+└── README.md
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## API Backend
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+- `GET /api/health` - Verifie que le serveur fonctionne
+- `GET /api/lightning` - Donnees de foudre (Blitzortung)
+- `GET /api/radar-timestamp` - Timestamp radar RainViewer
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+## Notes
+
+- Le plan gratuit de Render s'eteint apres 15 min d'inactivite (se reveille a la 1ere visite)
+- Les eclairs Blitzortung necessitent un compte (gratuit sur blitzortung.org)
+- Le radar RainViewer fonctionne sans compte et couvre le monde entier
