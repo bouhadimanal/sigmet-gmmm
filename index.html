@@ -1,12 +1,397 @@
-<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>SIGMET Generator GMMM</title>
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
-  </body>
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SIGMET Generator GMMM</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:#080c14;color:#e2e8f0;height:100vh;overflow:hidden}
+header{display:flex;align-items:center;justify-content:space-between;padding:10px 16px;background:#0d1117;border-bottom:1px solid rgba(51,65,85,0.5)}
+.logo{display:flex;align-items:center;gap:12px}
+.icon{width:32px;height:32px;border-radius:8px;background:rgba(14,165,233,0.1);border:1px solid rgba(14,165,233,0.2);display:flex;align-items:center;justify-content:center;font-size:16px}
+h1{font-size:14px;font-weight:700;letter-spacing:0.05em;text-transform:uppercase}
+.sub{font-size:10px;color:#64748b}
+.badge{font-size:10px;padding:2px 8px;border:1px solid #334155;border-radius:4px;color:#94a3b8}
+.container{display:flex;height:calc(100vh - 53px)}
+#map{flex:1;background:#0a0e1a;position:relative}
+.sidebar{width:360px;background:#0d1117;border-left:1px solid rgba(51,65,85,0.5);padding:16px;overflow-y:auto;font-size:12px;display:flex;flex-direction:column}
+.section{background:#161b22;border:1px solid rgba(51,65,85,0.5);border-radius:6px;padding:12px;margin-bottom:12px}
+.title{font-size:11px;font-weight:600;color:#94a3b8;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:8px}
+.row{display:flex;gap:8px;margin-bottom:8px}
+.col{flex:1}
+label{display:block;font-size:11px;color:#64748b;margin-bottom:4px}
+input,select{width:100%;padding:6px 8px;background:#161b22;border:1px solid #334155;color:#e2e8f0;border-radius:4px;font-size:12px;font-family:inherit}
+input:focus,select:focus{outline:none;border-color:#0e7490}
+button{padding:8px 16px;background:#0e7490;color:#fff;border:none;border-radius:4px;cursor:pointer;font-size:12px;font-weight:500}
+button:hover{background:#0891b2}
+button.small{padding:4px 8px;font-size:10px}
+button.danger{background:#7f1d1d;color:#fca5a5}
+button.danger:hover{background:#991b1b}
+button.active{background:rgba(14,165,233,0.2);color:#22d3ee;border:1px solid rgba(14,165,233,0.3)}
+textarea{width:100%;min-height:140px;background:#161b22;border:1px solid #334155;color:#e2e8f0;border-radius:4px;padding:8px;font-family:monospace;font-size:11px;line-height:1.6;resize:none}
+.empty{min-height:140px;border:1px dashed #334155;border-radius:4px;display:flex;align-items:center;justify-content:center;text-align:center;color:#64748b;font-size:11px;padding:16px}
+.lightning{display:flex;align-items:center;gap:8px;margin-bottom:4px}
+.dot{width:8px;height:8px;border-radius:50%;display:inline-block}
+.dot.yellow{background:#fbbf24}
+.dot.green{background:#22c55e}
+.dot.red{background:#ef4444}
+.status{font-size:10px;color:#64748b;margin-left:auto}
+.sigmet-num{display:flex;gap:6px;align-items:center;margin-bottom:12px;padding:8px;background:rgba(14,165,233,0.05);border:1px solid rgba(14,165,233,0.2);border-radius:6px}
+.sigmet-num span{padding:4px 8px;background:#0f1525;border:1px solid #334155;border-radius:4px;color:#22d3ee;font-family:monospace;font-size:12px;font-weight:bold}
+.controls{position:absolute;top:16px;left:16px;z-index:1000;display:flex;gap:8px}
+.legend{position:absolute;bottom:16px;left:16px;background:rgba(15,21,37,0.9);border:1px solid #334155;border-radius:8px;padding:12px;font-size:11px;z-index:1000}
+.legend-item{display:flex;align-items:center;gap:8px;margin-bottom:6px}
+.legend-line{width:16px;height:0;border-top:2px dashed #38bdf8}
+.footer{text-align:center;padding:8px;font-size:10px;color:#475569;border-top:1px solid rgba(51,65,85,0.5);margin-top:auto}
+.info{color:#f59e0b;font-size:10px;margin-top:4px}
+.error{color:#ef4444;font-size:10px;margin-top:4px}
+.success{color:#22c55e;font-size:10px;margin-top:4px}
+.btns{display:flex;gap:4px;justify-content:flex-end;margin-bottom:4px}
+</style>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+</head>
+<body>
+<header>
+  <div class="logo">
+    <div class="icon">✈</div>
+    <div>
+      <h1>SIGMET Generator</h1>
+      <div class="sub">Casablanca FIR — GMMM</div>
+    </div>
+  </div>
+  <div style="display:flex;gap:8px">
+    <span class="badge" style="display:flex;align-items:center;gap:6px"><span class="dot green" style="width:6px;height:6px"></span> En ligne</span>
+    <span class="badge">GMMM</span>
+  </div>
+</header>
+
+<div class="container">
+  <div id="map">
+    <div class="controls">
+      <button id="drawBtn" onclick="toggleDraw()">✏️ Dessiner</button>
+      <button id="clearBtn" class="danger small" style="display:none" onclick="clearDraw()">🗑 Effacer</button>
+      <button id="doneBtn" class="small" style="display:none;background:#15803d" onclick="finalizeDraw()">✓ Terminer</button>
+    </div>
+    <div class="legend">
+      <div class="title">Legende</div>
+      <div class="legend-item"><div class="dot yellow"></div><span style="color:#94a3b8">Eclair</span></div>
+      <div class="legend-item"><div class="legend-line"></div><span style="color:#94a3b8">FIR GMMM</span></div>
+    </div>
+  </div>
+
+  <div class="sidebar">
+    <div class="section">
+      <div class="lightning">
+        <div class="dot yellow" id="statusDot"></div>
+        <span>Impacts de foudre</span>
+        <span class="status" id="lightningStatus">Chargement...</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;margin-top:4px">
+        <span id="strikeCount" style="font-size:20px;font-family:monospace;font-weight:700;color:#fbbf24">0</span>
+        <span style="font-size:10px;color:#64748b">eclairs FIR</span>
+        <button class="small" onclick="refreshLightning()">🔄</button>
+      </div>
+      <div id="lightningMsg" class="info"></div>
+    </div>
+
+    <div class="title">Validite</div>
+    <div class="row">
+      <div class="col">
+        <label>Heure debut (UTC)</label>
+        <input type="time" id="startTime" />
+      </div>
+      <div class="col">
+        <label>Duree (1-4H)</label>
+        <select id="duration"><option value="1">1H00</option><option value="2">2H00</option><option value="3">3H00</option><option value="4" selected>4H00</option></select>
+      </div>
+    </div>
+
+    <div class="title" style="margin-top:12px">Configuration SIGMET</div>
+    <div class="row">
+      <div class="col"><label>Phenomene</label><select id="phenomenon"><option value="TS">TS - Thunderstorm</option><option value="CB">CB - Cumulonimbus</option><option value="TURB">TURB - Turbulence</option><option value="ICE">ICE - Icing</option></select></div>
+      <div class="col"><label>Type</label><select id="descriptor"><option value="EMBD">EMBD</option><option value="ISOL">ISOL</option><option value="OCNL">OCNL</option><option value="FRQ">FRQ</option><option value="SQL">SQL</option><option value="HVY">HVY</option></select></div>
+    </div>
+    <div class="row">
+      <div class="col"><label>Etat</label><select id="observation"><option value="OBS">OBS</option><option value="FCST">FCST</option></select></div>
+      <div class="col"><label>Mouvement</label><select id="movement"><option value="N">N</option><option value="NE">NE</option><option value="E">E</option><option value="SE">SE</option><option value="S">S</option><option value="SW">SW</option><option value="W">W</option><option value="NW">NW</option><option value="STNR" selected>STNR</option></select></div>
+    </div>
+    <div class="row">
+      <div class="col"><label>TOP FL</label><input type="text" id="topFL" value="FL340" /></div>
+      <div class="col"><label>Type de Zone</label><select id="zoneType" onchange="clearDraw()"><option value="WI">WI - Polygone</option><option value="E OF LINE">E OF LINE</option><option value="W OF LINE">W OF LINE</option><option value="N OF LINE">N OF LINE</option><option value="S OF LINE">S OF LINE</option></select></div>
+    </div>
+
+    <div class="sigmet-num">
+      <span>GMMM</span>
+      <input type="text" id="sigmetNum" value="T01" style="flex:1;margin-bottom:0" />
+    </div>
+
+    <div class="title">SIGMET</div>
+    <div id="sigmetOutput">
+      <div class="empty">Cliquez sur "Dessiner" puis sur la carte pour generer le SIGMET</div>
+    </div>
+
+    <div class="footer">FIR Maroc | Validite 1-4H | Mise a jour 30s</div>
+  </div>
+</div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+// ============================================================
+// FIR GMMM - Coordonnees exactes
+// ============================================================
+const GMMM_FIR = [
+  [35.97,-11.97],[35.98,-7.38],[35.8,-7.38],[35.8,-2.08],
+  [32.52,-1.25],[32.1,-1.17],[31.93,-2.78],[31.85,-2.6],
+  [28.7,-8.57],[27.72,-8.6],[27.72,-13.17],[32.28,-14.6],[35.97,-11.97]
+];
+const GMMM_CENTER = [32.0, -8.0];
+
+// ============================================================
+// Variables globales
+// ============================================================
+let map, drawnLayer, strikesLayer, isDrawing = false, coords = [];
+
+// ============================================================
+// Initialisation de la carte
+// ============================================================
+function initMap() {
+  map = L.map('map').setView(GMMM_CENTER, 6);
+  
+  L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+    attribution: '&copy; OSM &copy; CARTO', subdomains: 'abcd'
+  }).addTo(map);
+
+  L.polygon(GMMM_FIR, {
+    color: '#38bdf8', weight: 2, opacity: 0.8,
+    fillColor: '#38bdf8', fillOpacity: 0.03, dashArray: '5, 5'
+  }).addTo(map);
+
+  drawnLayer = L.layerGroup().addTo(map);
+  strikesLayer = L.layerGroup().addTo(map);
+
+  map.on('click', (e) => {
+    if (!isDrawing) return;
+    const pt = [e.latlng.lat, e.latlng.lng];
+    const zoneType = document.getElementById('zoneType').value;
+    if (zoneType === 'WI') {
+      coords.push(pt);
+    } else {
+      if (coords.length >= 4) return;
+      coords.push(pt);
+    }
+    updateDrawn();
+    generateSigmet();
+    updateDrawInfo();
+  });
+}
+
+// ============================================================
+// Dessin
+// ============================================================
+function toggleDraw() {
+  isDrawing = !isDrawing;
+  const btn = document.getElementById('drawBtn');
+  if (isDrawing) {
+    coords = [];
+    updateDrawn();
+    btn.textContent = '✏️ Desactiver';
+    btn.classList.add('active');
+    document.getElementById('clearBtn').style.display = 'block';
+    map.getContainer().style.cursor = 'crosshair';
+    updateDrawInfo();
+  } else {
+    btn.textContent = '✏️ Dessiner';
+    btn.classList.remove('active');
+    document.getElementById('clearBtn').style.display = 'none';
+    document.getElementById('doneBtn').style.display = 'none';
+    map.getContainer().style.cursor = '';
+  }
+}
+
+function clearDraw() {
+  coords = [];
+  updateDrawn();
+  generateSigmet();
+  updateDrawInfo();
+}
+
+function finalizeDraw() {
+  isDrawing = false;
+  document.getElementById('drawBtn').textContent = '✏️ Dessiner';
+  document.getElementById('drawBtn').classList.remove('active');
+  document.getElementById('doneBtn').style.display = 'none';
+  map.getContainer().style.cursor = '';
+}
+
+function updateDrawInfo() {
+  const zoneType = document.getElementById('zoneType').value;
+  if (isDrawing && zoneType !== 'WI' && coords.length >= 2) {
+    document.getElementById('doneBtn').style.display = 'block';
+  } else if (isDrawing && zoneType === 'WI' && coords.length >= 3) {
+    document.getElementById('doneBtn').style.display = 'block';
+  } else {
+    document.getElementById('doneBtn').style.display = 'none';
+  }
+  if (coords.length > 0) {
+    document.getElementById('clearBtn').style.display = 'block';
+  }
+}
+
+function updateDrawn() {
+  drawnLayer.clearLayers();
+  if (coords.length === 0) return;
+  coords.forEach(pt => {
+    L.circleMarker(pt, {radius: 5, fillColor: '#22d3ee', color: '#0e7490', weight: 2, fillOpacity: 1}).addTo(drawnLayer);
+  });
+  const zoneType = document.getElementById('zoneType').value;
+  if (zoneType === 'WI' && coords.length >= 3) {
+    L.polygon([...coords, coords[0]], {color: '#22d3ee', weight: 2, opacity: 0.8, fillColor: '#22d3ee', fillOpacity: 0.1}).addTo(drawnLayer);
+  } else if (coords.length >= 2) {
+    L.polyline(coords, {color: '#22d3ee', weight: 3, opacity: 1}).addTo(drawnLayer);
+  }
+}
+
+// ============================================================
+// Formatage coordonnees SIGMET
+// ============================================================
+function fmtCoord(lat, lon) {
+  const la = Math.abs(lat), ld = Math.floor(la), lm = Math.floor((la - ld) * 60);
+  const lo = Math.abs(lon), lod = Math.floor(lo), lom = Math.floor((lo - lod) * 60);
+  return (lat >= 0 ? 'N' : 'S') + String(ld).padStart(2, '0') + String(lm).padStart(2, '0') + ' ' + 
+         (lon >= 0 ? 'E' : 'W') + String(lod).padStart(3, '0') + String(lom).padStart(2, '0');
+}
+
+// ============================================================
+// Generation SIGMET
+// ============================================================
+function generateSigmet() {
+  const output = document.getElementById('sigmetOutput');
+  if (coords.length === 0) {
+    output.innerHTML = '<div class="empty">Cliquez sur "Dessiner" puis sur la carte pour generer le SIGMET</div>';
+    return;
+  }
+  
+  const p = {
+    phenomenon: document.getElementById('phenomenon').value,
+    descriptor: document.getElementById('descriptor').value,
+    observation: document.getElementById('observation').value,
+    movement: document.getElementById('movement').value,
+    topFL: document.getElementById('topFL').value,
+    sigmetNumber: document.getElementById('sigmetNum').value,
+    zoneType: document.getElementById('zoneType').value
+  };
+  const startTime = document.getElementById('startTime').value;
+  const duration = parseInt(document.getElementById('duration').value);
+
+  const now = new Date();
+  const day = String(now.getUTCDate()).padStart(2, '0');
+  const hr = String(now.getUTCHours()).padStart(2, '0');
+  const mn = String(now.getUTCMinutes()).padStart(2, '0');
+  const issue = day + hr + mn;
+
+  let validFrom = issue;
+  if (startTime) {
+    const [h, m] = startTime.split(':').map(Number);
+    const start = new Date(now.getTime());
+    start.setUTCHours(h, m, 0, 0);
+    if (start < now) start.setUTCDate(start.getUTCDate() + 1);
+    validFrom = String(start.getUTCDate()).padStart(2, '0') + String(start.getUTCHours()).padStart(2, '0') + String(start.getUTCMinutes()).padStart(2, '0');
+  }
+
+  const to = new Date(now.getTime());
+  to.setUTCDate(parseInt(validFrom.substring(0, 2)));
+  to.setUTCHours(parseInt(validFrom.substring(2, 4)), parseInt(validFrom.substring(4, 6)), 0, 0);
+  to.setTime(to.getTime() + duration * 3600000);
+  const validTo = String(to.getUTCDate()).padStart(2, '0') + String(to.getUTCHours()).padStart(2, '0') + String(to.getUTCMinutes()).padStart(2, '0');
+
+  const c = coords.map(pt => fmtCoord(pt[0], pt[1])).join(' - ');
+  const zone = p.zoneType === 'WI' ? 'WI ' + c : p.zoneType + ' ' + c;
+  const desc = p.descriptor ? p.descriptor + ' ' : '';
+  const mov = p.movement === 'STNR' ? 'STNR NC' : 'MOV ' + p.movement + ' NC';
+
+  const sigmet = 'WSMC31 GMMC ' + issue + '\nGMMM SIGMET ' + p.sigmetNumber + ' VALID ' + validFrom + '/' + validTo + ' GMMC-\nGMMM CASABLANCA FIR\n' + desc + p.phenomenon + ' ' + p.observation + ' ' + zone + '\nTOP ' + p.topFL + ' ' + mov + '=';
+
+  output.innerHTML =
+    '<div class="btns">' +
+    '<button class="small" onclick="copySigmet()">📋 Copier</button>' +
+    '<button class="small danger" onclick="clearDraw()">🗑 Effacer</button></div>' +
+    '<textarea readonly id="sigmetText">' + sigmet + '</textarea>' +
+    '<div class="success" id="copyMsg"></div>';
+}
+
+function copySigmet() {
+  const ta = document.getElementById('sigmetText');
+  if (ta) {
+    navigator.clipboard.writeText(ta.value);
+    document.getElementById('copyMsg').textContent = '✅ SIGMET copie dans le presse-papiers !';
+    setTimeout(() => { document.getElementById('copyMsg').textContent = ''; }, 3000);
+  }
+}
+
+// ============================================================
+// Eclairs - via proxy CORS gratuit
+// ============================================================
+const PROXY_URL = 'https://api.allorigins.win/raw?url=';
+const BLITZ_URL = 'https://map.blitzortung.org/map_data.json';
+
+async function fetchLightning() {
+  try {
+    const res = await fetch(PROXY_URL + encodeURIComponent(BLITZ_URL), { cache: 'no-store' });
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const data = await res.json();
+    if (data.dots && Array.isArray(data.dots)) {
+      return data.dots
+        .filter(s => s[0] >= 25 && s[0] <= 38 && s[1] >= -15 && s[1] <= -2)
+        .map(s => ({ lat: s[0], lon: s[1] }));
+    }
+  } catch (err) {
+    console.warn('Erreur eclairs:', err);
+  }
+  return [];
+}
+
+async function refreshLightning() {
+  const statusEl = document.getElementById('lightningStatus');
+  const countEl = document.getElementById('strikeCount');
+  const msgEl = document.getElementById('lightningMsg');
+  const dotEl = document.getElementById('statusDot');
+  
+  statusEl.textContent = 'Chargement...';
+  dotEl.className = 'dot yellow';
+  
+  const strikes = await fetchLightning();
+  
+  countEl.textContent = strikes.length;
+  
+  // Afficher sur la carte
+  strikesLayer.clearLayers();
+  strikes.forEach(s => {
+    L.circleMarker([s.lat, s.lon], {
+      radius: 2.5, fillColor: '#fbbf24', color: '#f59e0b',
+      weight: 1, opacity: 0.9, fillOpacity: 0.9
+    }).addTo(strikesLayer);
+  });
+  
+  if (strikes.length > 0) {
+    statusEl.textContent = 'Temps reel';
+    dotEl.className = 'dot green';
+    msgEl.className = 'success';
+    msgEl.textContent = '✅ ' + strikes.length + ' eclairs dans la FIR';
+  } else {
+    statusEl.textContent = 'Aucun';
+    dotEl.className = 'dot yellow';
+    msgEl.className = 'info';
+    msgEl.textContent = 'ℹ️ Aucun eclair detecte actuellement';
+  }
+}
+
+// ============================================================
+// Init
+// ============================================================
+initMap();
+refreshLightning();
+setInterval(refreshLightning, 30000);
+</script>
+</body>
 </html>
