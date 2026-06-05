@@ -316,7 +316,11 @@ function generateSigmet() {
   to.setTime(to.getTime() + duration * 3600000);
   const validTo = String(to.getUTCDate()).padStart(2, '0') + String(to.getUTCHours()).padStart(2, '0') + String(to.getUTCMinutes()).padStart(2, '0');
 
-  const c = coords.map(pt => fmtCoord(pt[0], pt[1])).join(' - ');
+  let formattedCoords = coords.map(pt => fmtCoord(pt[0], pt[1]));
+  if (p.zoneType === 'WI' && formattedCoords.length > 0) {
+    formattedCoords.push(formattedCoords[0]);
+  }
+  const c = formattedCoords.join(' - ');
   const zone = p.zoneType === 'WI' ? 'WI ' + c : p.zoneType + ' ' + c;
   const desc = p.descriptor ? p.descriptor + ' ' : '';
   const mov = p.movement === 'STNR' ? 'STNR NC' : 'MOV ' + p.movement + ' NC';
