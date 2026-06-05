@@ -68,10 +68,10 @@ textarea{width:100%;min-height:140px;background:#161b22;border:1px solid #334155
 
 <div class="container">
   <div id="map">
-    <div class="controls" onclick="event.stopPropagation()">
-      <button id="drawBtn" onclick="event.stopPropagation(); toggleDraw()">✏️ Dessiner</button>
-      <button id="clearBtn" class="danger small" style="display:none" onclick="event.stopPropagation(); clearDraw()">🗑 Effacer</button>
-      <button id="doneBtn" class="small" style="display:none;background:#15803d" onclick="event.stopPropagation(); finalizeDraw()">✓ Terminer</button>
+    <div class="controls" style="pointer-events:none">
+      <button id="drawBtn" style="pointer-events:auto" onclick="handleButtonClick(event, toggleDraw)">✏️ Dessiner</button>
+      <button id="clearBtn" class="danger small" style="display:none;pointer-events:auto" onclick="handleButtonClick(event, clearDraw)">🗑 Effacer</button>
+      <button id="doneBtn" class="small" style="display:none;background:#15803d;pointer-events:auto" onclick="handleButtonClick(event, finalizeDraw)">✓ Terminer</button>
     </div>
     <div class="legend">
       <div class="title">Legende</div>
@@ -155,6 +155,16 @@ let map, drawnLayer, strikesLayer, isDrawing = false, coords = [];
 // ============================================================
 // Initialisation de la carte
 // ============================================================
+let ignoreNextMapClick = false;
+
+function handleButtonClick(event, callback) {
+  event.stopPropagation();
+  event.preventDefault();
+  ignoreNextMapClick = true;
+  callback();
+  setTimeout(() => { ignoreNextMapClick = false; }, 100);
+}
+
 function initMap() {
   map = L.map('map').setView(GMMM_CENTER, 6);
   
@@ -172,6 +182,7 @@ function initMap() {
 
   map.on('click', (e) => {
     if (!isDrawing) return;
+    if (ignoreNextMapClick) return;
     const pt = [e.latlng.lat, e.latlng.lng];
     const zoneType = document.getElementById('zoneType').value;
     if (zoneType === 'WI') {
