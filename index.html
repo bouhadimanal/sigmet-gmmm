@@ -68,10 +68,10 @@ textarea{width:100%;min-height:140px;background:#161b22;border:1px solid #334155
 
 <div class="container">
   <div id="map">
-    <div class="controls">
-      <button id="drawBtn" onclick="toggleDraw()">✏️ Dessiner</button>
-      <button id="clearBtn" class="danger small" style="display:none" onclick="clearDraw()">🗑 Effacer</button>
-      <button id="doneBtn" class="small" style="display:none;background:#15803d" onclick="finalizeDraw()">✓ Terminer</button>
+    <div class="controls" onclick="event.stopPropagation()">
+      <button id="drawBtn" onclick="event.stopPropagation(); toggleDraw()">✏️ Dessiner</button>
+      <button id="clearBtn" class="danger small" style="display:none" onclick="event.stopPropagation(); clearDraw()">🗑 Effacer</button>
+      <button id="doneBtn" class="small" style="display:none;background:#15803d" onclick="event.stopPropagation(); finalizeDraw()">✓ Terminer</button>
     </div>
     <div class="legend">
       <div class="title">Legende</div>
